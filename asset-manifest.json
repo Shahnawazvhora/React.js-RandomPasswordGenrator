@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/React.js-RandomPasswordGenrator/static/css/main.850d5cb4.css",
+    "main.js": "/React.js-RandomPasswordGenrator/static/js/main.d756712f.js",
+    "static/media/password-genrator.gif": "/React.js-RandomPasswordGenrator/static/media/password-genrator.8e82b6a5c66a96af5396.gif",
+    "index.html": "/React.js-RandomPasswordGenrator/index.html",
+    "main.850d5cb4.css.map": "/React.js-RandomPasswordGenrator/static/css/main.850d5cb4.css.map",
+    "main.d756712f.js.map": "/React.js-RandomPasswordGenrator/static/js/main.d756712f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.850d5cb4.css",
+    "static/js/main.d756712f.js"
+  ]
+}
