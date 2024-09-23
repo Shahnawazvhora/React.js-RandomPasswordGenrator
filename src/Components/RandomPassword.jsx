@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import copyIcon from "../Images/copy-file-icon.png";
 import passwordGif from "../Images/password-genrator.gif";
 import { toast } from 'react-hot-toast';
@@ -11,148 +11,109 @@ const RandomPassword = () => {
   const [includeNumbers, setIncludeNumbers] = useState(true);
   const [includeSpecialCharacters, setIncludeSpecialCharacters] = useState(false);
   const [copyText, setCopyText] = useState('');
-  const [strengthLevel, setstrengthLevel] = useState('');
+  const [strengthLevel, setStrengthLevel] = useState('');
 
-  const getSliderColor = () => {
+  const getStrengthLevel = () => {
     if (includeUppercase && includeLowercase && includeNumbers && includeSpecialCharacters && passwordLength >= 20) {
-      return "EnoughStrong"  
+      return "Enough Strong";
     }
     else if (includeUppercase && includeLowercase && includeNumbers && includeSpecialCharacters && passwordLength >= 12) {
-      return "Strong"
+      return "Strong";
     }
     else if ((includeUppercase || includeLowercase || includeNumbers) && passwordLength >= 8) {
-      return "Medium"
+      return "Medium";
     }
-    else {
-      return "Easy"
-    }
-  }
+    return "Easy";
+  };
+
   useEffect(() => {
-    if(!includeUppercase && !includeLowercase && !includeNumbers && !includeSpecialCharacters) {
+    if (!includeUppercase && !includeLowercase && !includeNumbers && !includeSpecialCharacters) {
       setIncludeNumbers(true);
     }
-  },[includeUppercase, includeLowercase, includeNumbers, includeSpecialCharacters]);
+    generatePassword(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [passwordLength, includeUppercase, includeLowercase, includeNumbers, includeSpecialCharacters]);
 
-  const sliderPasswordLength = (event) => {
+  const handleSliderChange = (event) => {
     setPasswordLength(parseInt(event.target.value));
-  }
-
-  const handleUppercaseChange = (event) => {
-    setIncludeUppercase(event.target.checked);
   };
 
-  const handleLowercaseChange = (event) => {
-    setIncludeLowercase(event.target.checked);
-  };
-
-  const handleNumbersChange = (event) => {
-    setIncludeNumbers(event.target.checked);
-  };
-
-  const handleSpecialCharactersChange = (event) => {
-    setIncludeSpecialCharacters(event.target.checked);
+  const handleCheckboxChange = (setter) => (event) => {
+    setter(event.target.checked);
   };
 
   const handleCopyText = () => {
     navigator.clipboard.writeText(password);
-    setCopyText(password)
+    setCopyText(password);
     toast.success(`Text Copied - ${password}`);
     setTimeout(() => {
       setCopyText('');
     }, 1000);
-  }
+  };
 
-  const genratePassword = () => {
-    const lenght = passwordLength;
+  const generatePassword = () => {
+    const length = passwordLength;
     const UppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const LowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
-    const Numbers = 1234567890;
+    const Numbers = "1234567890";
     const SpecialCharacters = '!@#$%^&*()<>,.?/[]{}-=_+|/';
     let characters = '';
-    let strengthLevels = '';
 
-    if (includeUppercase && includeLowercase && includeNumbers && includeSpecialCharacters && lenght >= 20) {
-      strengthLevels = "Enough Strong";
-    }
-    else if (includeUppercase && includeLowercase && includeNumbers && includeSpecialCharacters && lenght >= 12) {
-      strengthLevels = "Strong"
-    }
-    else if ((includeUppercase || includeLowercase || includeNumbers) && lenght >= 8) {
-      strengthLevels = "Medium";
-    }
-    else {
-      strengthLevels = "Easy";
-    }
-
-    if (includeUppercase) {
-      characters += UppercaseLetters;
-    }
-    if (includeLowercase) {
-      characters += LowercaseLetters;
-    }
-    if (includeNumbers) {
-      characters += Numbers;
-    }
-    if (includeSpecialCharacters) {
-      characters += SpecialCharacters;
-    }
+    if (includeUppercase) characters += UppercaseLetters;
+    if (includeLowercase) characters += LowercaseLetters;
+    if (includeNumbers) characters += Numbers;
+    if (includeSpecialCharacters) characters += SpecialCharacters;
 
     let newPassword = '';
-
-    for (let i = 0; i < lenght; i++) {
-      const randomPassword = Math.floor(Math.random() * characters.length);
-      newPassword += characters[randomPassword];
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      newPassword += characters[randomIndex];
     }
     setPassword(newPassword);
-    setstrengthLevel(strengthLevels);
-  }
-
-  useEffect(() => {
-    genratePassword();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [passwordLength]);
+    setStrengthLevel(getStrengthLevel());
+  };
 
   return (
-    <>
-      <div className="container">
-        <div className="content">
-          <div className="gif">
-            <img src={passwordGif} alt="password-Gif" />
+    <div className="container">
+      <div className="content">
+        <div className="gif">
+          <img src={passwordGif} alt="password-Gif" />
+        </div>
+        <div className="text">
+          <h1 className='title'>Random Password Generator</h1>
+          <p className='subTitle'>Create a strong Password Generator</p>
+        </div>
+        <input type="text" className='input-field' value={password} readOnly />
+        <button className='arrow-symbol' onClick={generatePassword}>↻</button>
+        <button className='copy-btn' onClick={handleCopyText}>
+          <img src={copyIcon} alt="Copy-Icon" className='copy-icon' />
+          {copyText ? "Copied" : "Copy"}
+        </button>
+        <span className={`password-strength ${getStrengthLevel()}`}>{strengthLevel}</span>
+        <div className='slider'>
+          <label htmlFor="passwordLength" className='passwordLength'>Password Length: {passwordLength}</label>
+          <input type="range" min={5} max={30} value={passwordLength} onChange={handleSliderChange} className='slider-input' />
+        </div>
+        <div className="checkboxes">
+          <div className="checkbox-wrapper">
+            <input type="checkbox" name="uppercase" id="uppercase" checked={includeUppercase} className='checkbox-input' onChange={handleCheckboxChange(setIncludeUppercase)} />
+            <label htmlFor="uppercase">Uppercase</label>
           </div>
-          <div className="text">
-            <h1 className='title'>Random PassWord Genrator</h1>
-            <p className='subTitle'>Create a strong PassWord Genrator</p>
+          <div className="checkbox-wrapper">
+            <input type="checkbox" name="lowercase" id="lowercase" checked={includeLowercase} className='checkbox-input' onChange={handleCheckboxChange(setIncludeLowercase)} />
+            <label htmlFor="lowercase">Lowercase</label>
           </div>
-          <input type="text" className='input-field' value={password} onChange={(e) => e.target.value} />
-          <button className='arrow-symbol' onClick={genratePassword}>↻</button>
-          <button className='copy-btn' onClick={handleCopyText}><img src={copyIcon} alt="Copy-Icon" className='copy-icon' />{copyText ? "Copied" : "Copy"}</button>
-          <span className={`password-strength ${getSliderColor()}`}>{strengthLevel}</span>
-          <div className='slider'>
-            <label htmlFor="passwordLength" className='passwordLength'>Password Length: {passwordLength}</label>
-            <input type="range" min={5} max={30} value={passwordLength} onChange={sliderPasswordLength} className='slider-input' />
+          <div className="checkbox-wrapper">
+            <input type="checkbox" name="numbers" id="numbers" checked={includeNumbers} className='checkbox-input' onChange={handleCheckboxChange(setIncludeNumbers)} />
+            <label htmlFor="numbers">Numbers</label>
           </div>
-          <div className="checkboxes">
-            <div className="checkbox-wrapper">
-              <input type="checkbox" name="uppercase" id="uppercase" checked={includeUppercase} className='checkbox-input' onChange={handleUppercaseChange} />
-              <label htmlFor="uppercase">uppercase</label>
-            </div>
-            <div className="checkbox-wrapper">
-              <input type="checkbox" name="lowercase" id="lowercase" checked={includeLowercase} className='checkbox-input' onChange={handleLowercaseChange} />
-              <label htmlFor="lowercase">lowercase</label>
-            </div>
-            <div className="checkbox-wrapper">
-              <input type="checkbox" name="numbers" id="numbers" checked={includeNumbers} className='checkbox-input' onChange={handleNumbersChange} />
-              <label htmlFor="numbers">numbers</label>
-            </div>
-            <div className="checkbox-wrapper">
-              <input type="checkbox" name="specialcharacters" id="specialcharacters" checked={includeSpecialCharacters} className='checkbox-input' onChange={handleSpecialCharactersChange} />
-              <label htmlFor="specialcharacters">special characters</label>
-            </div>
+          <div className="checkbox-wrapper">
+            <input type="checkbox" name="specialcharacters" id="specialcharacters" checked={includeSpecialCharacters} className='checkbox-input' onChange={handleCheckboxChange(setIncludeSpecialCharacters)} />
+            <label htmlFor="specialcharacters">Special Characters</label>
           </div>
         </div>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default RandomPassword
+export default RandomPassword;
